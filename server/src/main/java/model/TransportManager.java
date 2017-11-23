@@ -24,9 +24,9 @@ public class TransportManager {
         return transportMapByUUID.get(uuid);
     }
 
-   public void putTransport(String uuid, TTransport transport) {
+    public void putTransport(String uuid, TTransport transport) {
         transportMapByUUID.put(uuid, transport);
-   }
+    }
 
 
 }

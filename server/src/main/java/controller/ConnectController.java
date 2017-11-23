@@ -1,6 +1,7 @@
 package controller;
 
 import idl.PushReceiveService;
+import model.ClientManager;
 import model.ConnectResult;
 import model.Device;
 import model.TransportManager;
@@ -21,13 +22,13 @@ import javax.annotation.PostConstruct;
 
 @RestController
 public class ConnectController {
-    private static Logger log = LoggerFactory.getLogger(ConnectController.class);
 
-    private TransportManager transportManager;
+    private static Logger log = LoggerFactory.getLogger(ConnectController.class);
+    private ClientManager clientManager;
 
     @PostConstruct
     public void post() {
-        transportManager = TransportManager.getInstanceTransportManager();
+        clientManager = ClientManager.getInstanceClientManager();
     }
 
     @GetMapping("/ping")
@@ -39,15 +40,17 @@ public class ConnectController {
     public ConnectResult requestConnect(@RequestBody Device device) {
         log.warn("received device: {}", device);
 
-        TTransport transport = connectDevice(device.getIp());
-        String uuid = device.getUuid();
-        if(transport != null) {
-            transportManager.putTransport(uuid, transport);
+        ConnectResult connectResult = new ConnectResult();
+        boolean connectNewDeviceResult = connectNewDevice(device.getIp(), device.getUuid());
+
+        if (!connectNewDeviceResult) {
+            connectResult.setConnectResult("Fail To Connect New Device");
+            return connectResult;
         }
 
-        String pingResult = sendPingToDevice(uuid);
-        ConnectResult connectResult = new ConnectResult();
-        connectResult.setPingResult(pingResult);
+        String pingResult = sendPingToDevice(device.getUuid());
+        connectResult.setConnectResult(pingResult);
+
         log.warn("pingResult from ip {}: {}", device.getIp(), pingResult);
         return connectResult;
     }
@@ -56,9 +59,7 @@ public class ConnectController {
 
         String result = null;
         try {
-            TTransport transport = transportManager.getTransport(uuid);
-            TProtocol protocol = new TBinaryProtocol(transport);
-            PushReceiveService.Client client = new PushReceiveService.Client(protocol);
+            PushReceiveService.Client client = clientManager.getClient(uuid);
             result = client.ping();
         } catch (TException e) {
             e.printStackTrace();
@@ -67,21 +68,24 @@ public class ConnectController {
         return result;
     }
 
-    private TTransport connectDevice(String ip) {
+    private boolean connectNewDevice(String ip, String uuid) {
 
-        TTransport transport = null;
+        boolean connectNewDeviceResult = false;
 
         try {
-            transport = new TSocket(ip, 10000);
-
+            TTransport transport = new TSocket(ip, 10000);
             transport.open();
+            TProtocol protocol = new TBinaryProtocol(transport);
+            PushReceiveService.Client client = new PushReceiveService.Client(protocol);
+            clientManager.putClient(uuid, client);
+            connectNewDeviceResult = true;
 
         } catch (TTransportException e) {
             e.printStackTrace();
             log.debug("TTransportException {}", e);
         }
 
-        return transport;
+        return connectNewDeviceResult;
 
     }
 }

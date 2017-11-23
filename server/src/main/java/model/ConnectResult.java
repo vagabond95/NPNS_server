@@ -1,20 +1,20 @@
 package model;
 
 public class ConnectResult {
-    private String pingResult;
+    private String connectResult;
 
-    public String getPingResult() {
-        return pingResult;
+    public String getConnectResult() {
+        return connectResult;
     }
 
-    public void setPingResult(String pingResult) {
-        this.pingResult = pingResult;
+    public void setConnectResult(String connectResult) {
+        this.connectResult = connectResult;
     }
 
     @Override
     public String toString() {
         return "ConnectResult{" +
-                "pingResult='" + pingResult + '\'' +
+                "connectResult='" + connectResult + '\'' +
                 '}';
     }
 }
