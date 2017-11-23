@@ -17,15 +17,15 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new MessageStandardSchemeFactory();
   private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new MessageTupleSchemeFactory();
 
-  public java.lang.String title; // required
-  public java.lang.String message; // required
+  public String title; // required
+  public String message; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     TITLE((short)1, "title"),
     MESSAGE((short)2, "message");
 
-    private static final java.util.Map<java.lang.String, _Fields> byName = new java.util.HashMap<java.lang.String, _Fields>();
+    private static final java.util.Map<String, _Fields> byName = new java.util.HashMap<String, _Fields>();
 
     static {
       for (_Fields field : java.util.EnumSet.allOf(_Fields.class)) {
@@ -53,21 +53,21 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
      */
     public static _Fields findByThriftIdOrThrow(int fieldId) {
       _Fields fields = findByThriftId(fieldId);
-      if (fields == null) throw new java.lang.IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+      if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
       return fields;
     }
 
     /**
      * Find the _Fields constant that matches name, or null if its not found.
      */
-    public static _Fields findByName(java.lang.String name) {
+    public static _Fields findByName(String name) {
       return byName.get(name);
     }
 
     private final short _thriftId;
-    private final java.lang.String _fieldName;
+    private final String _fieldName;
 
-    _Fields(short thriftId, java.lang.String fieldName) {
+    _Fields(short thriftId, String fieldName) {
       _thriftId = thriftId;
       _fieldName = fieldName;
     }
@@ -76,7 +76,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       return _thriftId;
     }
 
-    public java.lang.String getFieldName() {
+    public String getFieldName() {
       return _fieldName;
     }
   }
@@ -97,8 +97,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   }
 
   public Message(
-    java.lang.String title,
-    java.lang.String message)
+    String title,
+    String message)
   {
     this();
     this.title = title;
@@ -127,11 +127,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     this.message = null;
   }
 
-  public java.lang.String getTitle() {
+  public String getTitle() {
     return this.title;
   }
 
-  public Message setTitle(java.lang.String title) {
+  public Message setTitle(String title) {
     this.title = title;
     return this;
   }
@@ -151,11 +151,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
   }
 
-  public java.lang.String getMessage() {
+  public String getMessage() {
     return this.message;
   }
 
-  public Message setMessage(java.lang.String message) {
+  public Message setMessage(String message) {
     this.message = message;
     return this;
   }
@@ -175,13 +175,13 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
   }
 
-  public void setFieldValue(_Fields field, java.lang.Object value) {
+  public void setFieldValue(_Fields field, Object value) {
     switch (field) {
     case TITLE:
       if (value == null) {
         unsetTitle();
       } else {
-        setTitle((java.lang.String)value);
+        setTitle((String)value);
       }
       break;
 
@@ -189,14 +189,14 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       if (value == null) {
         unsetMessage();
       } else {
-        setMessage((java.lang.String)value);
+        setMessage((String)value);
       }
       break;
 
     }
   }
 
-  public java.lang.Object getFieldValue(_Fields field) {
+  public Object getFieldValue(_Fields field) {
     switch (field) {
     case TITLE:
       return getTitle();
@@ -205,13 +205,13 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
       return getMessage();
 
     }
-    throw new java.lang.IllegalStateException();
+    throw new IllegalStateException();
   }
 
   /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
   public boolean isSet(_Fields field) {
     if (field == null) {
-      throw new java.lang.IllegalArgumentException();
+      throw new IllegalArgumentException();
     }
 
     switch (field) {
@@ -220,11 +220,11 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     case MESSAGE:
       return isSetMessage();
     }
-    throw new java.lang.IllegalStateException();
+    throw new IllegalStateException();
   }
 
   @Override
-  public boolean equals(java.lang.Object that) {
+  public boolean equals(Object that) {
     if (that == null)
       return false;
     if (that instanceof Message)
@@ -282,7 +282,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
 
     int lastComparison = 0;
 
-    lastComparison = java.lang.Boolean.valueOf(isSetTitle()).compareTo(other.isSetTitle());
+    lastComparison = Boolean.valueOf(isSetTitle()).compareTo(other.isSetTitle());
     if (lastComparison != 0) {
       return lastComparison;
     }
@@ -292,7 +292,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
         return lastComparison;
       }
     }
-    lastComparison = java.lang.Boolean.valueOf(isSetMessage()).compareTo(other.isSetMessage());
+    lastComparison = Boolean.valueOf(isSetMessage()).compareTo(other.isSetMessage());
     if (lastComparison != 0) {
       return lastComparison;
     }
@@ -318,8 +318,8 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
   }
 
   @Override
-  public java.lang.String toString() {
-    java.lang.StringBuilder sb = new java.lang.StringBuilder("Message(");
+  public String toString() {
+    StringBuilder sb = new StringBuilder("Message(");
     boolean first = true;
 
     sb.append("title:");
@@ -354,7 +354,7 @@ public class Message implements org.apache.thrift.TBase<Message, Message._Fields
     }
   }
 
-  private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, java.lang.ClassNotFoundException {
+  private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
     try {
       read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
     } catch (org.apache.thrift.TException te) {
