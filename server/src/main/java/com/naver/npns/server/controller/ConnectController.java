@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ConnectController {
     private static Logger log = LoggerFactory.getLogger(ConnectController.class);
+
     @Autowired
     private ClientService clientService;
 
