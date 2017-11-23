@@ -1,4 +1,4 @@
-package controller;
+package com.naver.npns.server.controller;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;

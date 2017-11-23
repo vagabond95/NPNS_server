@@ -1,4 +1,4 @@
-package model;
+package com.naver.npns.server.model;
 
 public class ConnectResult {
     private String connectResult;

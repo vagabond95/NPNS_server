@@ -1,10 +1,9 @@
-package controller;
+package com.naver.npns.server.controller;
 
-import idl.PushReceiveService;
-import model.ClientManager;
-import model.ConnectResult;
-import model.Device;
-import model.TransportManager;
+import com.naver.npns.server.idl.PushReceiveService;
+import com.naver.npns.server.service.ClientService;
+import com.naver.npns.server.model.ConnectResult;
+import com.naver.npns.server.model.Device;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -13,23 +12,18 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
-
 @RestController
 public class ConnectController {
-
     private static Logger log = LoggerFactory.getLogger(ConnectController.class);
-    private ClientManager clientManager;
+    @Autowired
+    private ClientService clientService;
 
-    @PostConstruct
-    public void post() {
-        clientManager = ClientManager.getInstanceClientManager();
-    }
 
     @GetMapping("/ping")
     public String ping() {
@@ -59,7 +53,7 @@ public class ConnectController {
 
         String result = null;
         try {
-            PushReceiveService.Client client = clientManager.getClient(uuid);
+            PushReceiveService.Client client = clientService.getClient(uuid);
             result = client.ping();
         } catch (TException e) {
             e.printStackTrace();
@@ -77,7 +71,7 @@ public class ConnectController {
             transport.open();
             TProtocol protocol = new TBinaryProtocol(transport);
             PushReceiveService.Client client = new PushReceiveService.Client(protocol);
-            clientManager.putClient(uuid, client);
+            clientService.putClient(uuid, client);
             connectNewDeviceResult = true;
 
         } catch (TTransportException e) {
