@@ -1,9 +1,9 @@
-package controller;
+package com.naver.npns.server.controller;
 
-import idl.PushReceiveService;
-import model.ConnectResult;
-import model.Device;
-import model.TransportManager;
+import com.naver.npns.server.idl.PushReceiveService;
+import com.naver.npns.server.service.ClientService;
+import com.naver.npns.server.model.ConnectResult;
+import com.naver.npns.server.model.Device;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -12,23 +12,18 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
-
 @RestController
 public class ConnectController {
     private static Logger log = LoggerFactory.getLogger(ConnectController.class);
+    @Autowired
+    private ClientService clientService;
 
-    private TransportManager transportManager;
-
-    @PostConstruct
-    public void post() {
-        transportManager = TransportManager.getInstanceTransportManager();
-    }
 
     @GetMapping("/ping")
     public String ping() {
@@ -39,15 +34,17 @@ public class ConnectController {
     public ConnectResult requestConnect(@RequestBody Device device) {
         log.warn("received device: {}", device);
 
-        TTransport transport = connectDevice(device.getIp());
-        String uuid = device.getUuid();
-        if(transport != null) {
-            transportManager.putTransport(uuid, transport);
+        ConnectResult connectResult = new ConnectResult();
+        boolean connectNewDeviceResult = connectNewDevice(device.getIp(), device.getUuid());
+
+        if (!connectNewDeviceResult) {
+            connectResult.setConnectResult("Fail To Connect New Device");
+            return connectResult;
         }
 
-        String pingResult = sendPingToDevice(uuid);
-        ConnectResult connectResult = new ConnectResult();
-        connectResult.setPingResult(pingResult);
+        String pingResult = sendPingToDevice(device.getUuid());
+        connectResult.setConnectResult(pingResult);
+
         log.warn("pingResult from ip {}: {}", device.getIp(), pingResult);
         return connectResult;
     }
@@ -56,9 +53,7 @@ public class ConnectController {
 
         String result = null;
         try {
-            TTransport transport = transportManager.getTransport(uuid);
-            TProtocol protocol = new TBinaryProtocol(transport);
-            PushReceiveService.Client client = new PushReceiveService.Client(protocol);
+            PushReceiveService.Client client = clientService.getClient(uuid);
             result = client.ping();
         } catch (TException e) {
             e.printStackTrace();
@@ -67,21 +62,24 @@ public class ConnectController {
         return result;
     }
 
-    private TTransport connectDevice(String ip) {
+    private boolean connectNewDevice(String ip, String uuid) {
 
-        TTransport transport = null;
+        boolean connectNewDeviceResult = false;
 
         try {
-            transport = new TSocket(ip, 10000);
-
+            TTransport transport = new TSocket(ip, 10000);
             transport.open();
+            TProtocol protocol = new TBinaryProtocol(transport);
+            PushReceiveService.Client client = new PushReceiveService.Client(protocol);
+            clientService.putClient(uuid, client);
+            connectNewDeviceResult = true;
 
         } catch (TTransportException e) {
             e.printStackTrace();
             log.debug("TTransportException {}", e);
         }
 
-        return transport;
+        return connectNewDeviceResult;
 
     }
 }
