@@ -36,7 +36,7 @@ public class PushController {
         return pushResult;
     }
 
-    @PostMapping("/users/all/messages")
+    @PostMapping("/broadcast-messages")
     public void sendPushToAllDevice(@RequestBody PushMessage pushMessage) {
         ArrayList<PushResult> pushResultArrayList = new ArrayList<>();
         HashMap<String, PushReceiveService.Client> clientMapByUUID = clientService.getClientMapByUUID();
