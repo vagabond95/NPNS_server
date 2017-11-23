@@ -1,6 +1,7 @@
 package controller;
 
 import idl.PushReceiveService;
+import model.ConnectResult;
 import model.Device;
 import model.TransportManager;
 import org.apache.thrift.TException;
@@ -11,15 +12,14 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 
-@Controller
+@RestController
 public class ConnectController {
     private static Logger log = LoggerFactory.getLogger(ConnectController.class);
 
@@ -30,13 +30,13 @@ public class ConnectController {
         transportManager = TransportManager.getInstanceTransportManager();
     }
 
-    @RequestMapping("/ping/")
+    @GetMapping("/ping")
     public String ping() {
         return "pong";
     }
 
-    @RequestMapping(value = "/request_connect/", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String requestConnect(@RequestBody Device device) {
+    @PostMapping("/request_connect")
+    public ConnectResult requestConnect(@RequestBody Device device) {
         log.warn("received device: {}", device);
 
         TTransport transport = connectDevice(device.getIp());
@@ -45,12 +45,14 @@ public class ConnectController {
             transportManager.putTransport(uuid, transport);
         }
 
-        String pingResult = ping(uuid);
+        String pingResult = sendPingToDevice(uuid);
+        ConnectResult connectResult = new ConnectResult();
+        connectResult.setPingResult(pingResult);
         log.warn("pingResult from ip {}: {}", device.getIp(), pingResult);
-        return "pingResult = " +pingResult;
+        return connectResult;
     }
 
-    private String ping(String uuid) {
+    private String sendPingToDevice(String uuid) {
 
         String result = null;
         try {
@@ -77,9 +79,6 @@ public class ConnectController {
         } catch (TTransportException e) {
             e.printStackTrace();
             log.debug("TTransportException {}", e);
-        } catch (TException e) {
-            e.printStackTrace();
-            log.debug("TException {}", e);
         }
 
         return transport;
