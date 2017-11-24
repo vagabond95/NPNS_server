@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class AdminController {
@@ -39,8 +40,8 @@ public class AdminController {
     public ModelAndView adminMessges(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView("admin_messages");
 
-        HashMap<String, PushReceiveService.Client> clientMapByUUID = clientService.getClientMapByUUID();
-        HashMap<String, PushResult> pushResultMap = new HashMap<>();
+        Map<String, PushReceiveService.Client> clientMapByUUID = clientService.getClientMapByUUID();
+        Map<String, PushResult> pushResultMap = new HashMap<>();
 
         for(String uuid : clientMapByUUID.keySet()) {
             if(request.getParameter(uuid).equals("on")) {

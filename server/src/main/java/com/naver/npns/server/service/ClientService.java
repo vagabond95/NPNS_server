@@ -5,12 +5,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 @Service
 public class ClientService {
-    private static HashMap<String, PushReceiveService.Client> clientMapByUUID = new HashMap<>();
+    private static Map<String, PushReceiveService.Client> clientMapByUUID = new HashMap<>();
 
-    public static HashMap<String, PushReceiveService.Client> getClientMapByUUID() {
+    public static Map<String, PushReceiveService.Client> getClientMapByUUID() {
         return clientMapByUUID;
     }
 

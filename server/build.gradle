@@ -29,6 +29,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
+    compile ("org.mariadb.jdbc:mariadb-java-client:2.2.0")
 
     compile ("org.apache.thrift:libthrift:0.10.0")
     compile ("org.slf4j:slf4j-api:1.7.21")
@@ -36,6 +37,8 @@ dependencies {
     // tag::actuator[]
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.springframework.boot:spring-boot-starter-data-rest")
     // end::actuator[]
     // tag::tests[]
     testCompile("org.springframework.boot:spring-boot-starter-test")
