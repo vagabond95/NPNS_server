@@ -4,50 +4,34 @@ import com.naver.npns.server.idl.PushMessage;
 import com.naver.npns.server.idl.PushReceiveService;
 import com.naver.npns.server.model.PushResult;
 import com.naver.npns.server.service.ClientService;
+import com.naver.npns.server.service.PushService;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 @RestController
 public class PushController {
-    private static Logger log = LoggerFactory.getLogger(ConnectController.class);
+    private static Logger log = LoggerFactory.getLogger(PushController.class);
+
     @Autowired
-    private ClientService clientService;
+    private PushService pushService;
+
 
     @PostMapping("/users/{uuid}/messages")
-    public PushResult sendPushToDevice(@PathVariable String uuid, @RequestBody PushMessage pushMessage) {
-
-        PushResult pushResult = new PushResult();
-        try {
-            PushReceiveService.Client client = clientService.getClient(uuid);
-            pushResult.setPushResult(client.recv(pushMessage));
-        } catch (TException e) {
-            e.printStackTrace();
-        }
-
-        return pushResult;
+    public PushResult sendPushToSpecificDevice(@PathVariable String uuid, @RequestBody PushMessage pushMessage) {
+        return pushService.sendPushToDevice(uuid, pushMessage);
     }
 
     @PostMapping("/broadcast-messages")
-    public void sendPushToAllDevice(@RequestBody PushMessage pushMessage) {
-        ArrayList<PushResult> pushResultArrayList = new ArrayList<>();
-        HashMap<String, PushReceiveService.Client> clientMapByUUID = clientService.getClientMapByUUID();
-        for ( String uuid : clientMapByUUID.keySet()) {
-            try {
-                PushResult pushResult = new PushResult();
-                pushResult.setPushResult(clientMapByUUID.get(uuid).recv(pushMessage));
-                pushResultArrayList.add(pushResult);
-            } catch (TException e) {
-                e.printStackTrace();
-            }
-        }
+    public ArrayList<PushResult> sendPushToBroadcastDevice(@RequestBody PushMessage pushMessage) {
+        return pushService.sendPushToAllDevice(pushMessage);
     }
+
+
+
 }
